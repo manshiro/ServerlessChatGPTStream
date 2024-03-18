@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         'apigatewaymanagementapi', endpoint_url=F"https://{domain_name}/{stage}")
 
     # Request ChatGPT API
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": data},
@@ -27,7 +27,7 @@ def lambda_handler(event, context):
 
     # Send message to client
     for partial_message in response:
-        content = partial_message['choices'][0]['delta'].get('content')
+        content = partial_message.choices[0].delta.content
         if content:
             apigw_management.post_to_connection(
                 ConnectionId=connectionId, Data=content)
